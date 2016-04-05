@@ -61,61 +61,14 @@ def check_all(board, x, y, num):
     return False                    
                             
 def fill(board, x, y):
-    possible = {}
+    possible = []
     for i in range(1,10):
-        possible[i] = 0
         if check_all(board, x, y, i):
-            possible[i] = i
+            possible.append(i)
     if board[y][x] != 0:
-        possible[(board[y][x])] = 0
+        possible.remove(board[y][x])
     return possible
         
-def possibleEntries(board, i, j):
-    
-    possibilityArray = {}
-    
-    for x in range (1, 10):
-        possibilityArray[x] = 0
-    
-    #For horizontal entries
-    for y in range (0, 9):
-        if not board[i][y] == 0: 
-            possibilityArray[board[i][y]] = 1
-     
-    #For vertical entries
-    for x in range (0, 9):
-        if not board[x][j] == 0: 
-            possibilityArray[board[x][j]] = 1
-            
-    #For squares of three x three
-    k = 0
-    l = 0
-    if i >= 0 and i <= 2:
-        k = 0
-    elif i >= 3 and i <= 5:
-        k = 3
-    else:
-        k = 6
-    if j >= 0 and j <= 2:
-        l = 0
-    elif j >= 3 and j <= 5:
-        l = 3
-    else:
-        l = 6
-    for x in range (k, k + 3):
-        for y in range (l, l + 3):
-            if not board[x][y] == 0:
-                possibilityArray[board[x][y]] = 1          
-    
-    for x in range (1, 10):
-        if possibilityArray[x] == 0:
-            possibilityArray[x] = x
-        else:
-            possibilityArray[x] = 0
-    
-    return possibilityArray
-
-
 board = [[0,4,0,6,3,9,0,5,0],\
          [0,0,0,0,0,0,0,0,0],\
          [0,9,3,0,0,0,2,6,0],\
@@ -134,7 +87,7 @@ def solver(board):
     i = 0
     j = 0
     
-    possiblities = {}
+    possiblities = []
     
     # if board is full, there is no need to solve it any further
     if is_full(board):
@@ -152,23 +105,17 @@ def solver(board):
             else:
                 continue
             break
-        
-        # get all the possibilities for i,j
-        possiblities = fill(board, j, i)
+    possible = fill(board, j, i)
+    if possible != []:
+        for num in possible:
+            board[i][j] = num
+            solver(board)
+            
+    board[i][j] = 0
 
-        
-        # go through all the possibilities and call the the function
-        # again and again
-        for x in range (1, 10):
-            if possiblities[x] != 0:
-                board[i][j] = possiblities[x]
-                #file.write(printFileBoard(board))
-                solver(board)
-        # backtrack
-        board[i][j] = 0
     
         
     
 solver(board)
 
-        
+#print fill(board,1,0)        
